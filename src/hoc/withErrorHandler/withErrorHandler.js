@@ -5,20 +5,22 @@ const withErrorHandler = (WrappedComponent, axios) => {
     return (props) => {
         const [error, setError] = useState(null);
 
-        useEffect(() => {
-            const reqInterceptor = axios.interceptors.request.use(req => {
-                setError(null);
-                return req;
-            });
-            const resInterceptor = axios.interceptors.response.use(res => res, error => {
-                setError(error);
-            });
+        const reqInterceptor = axios.interceptors.request.use(req => req, err => {
+            setError(err);
+            return Promise.reject(err)
+        });
 
+        const resInterceptor = axios.interceptors.response.use(res => res, err => {
+            setError(err);
+            return Promise.reject(err)
+        });
+
+        useEffect(() => {
             return function cleanup() {
                 axios.interceptors.request.eject(reqInterceptor);
                 axios.interceptors.response.eject(resInterceptor);
             }
-        });
+        }, [reqInterceptor, resInterceptor]);
 
         const errorConfirmedHandler = () => {
             setError(null);
@@ -36,5 +38,7 @@ const withErrorHandler = (WrappedComponent, axios) => {
         );
     }
 }
+
+
 
 export default withErrorHandler;
