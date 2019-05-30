@@ -1,3 +1,6 @@
+import * as actionTypes from '../actions/actions';
+import { updateObject, createReducer } from './util';
+
 const initialState = {
     ingredients: null,
     totalPrice: 4,
@@ -11,59 +14,49 @@ const INGREDIENT_PRICE_LIST = {
     meat: 1.5
 }
 
-const switchcase = cases => defaultCase => key => 
-    cases.hasOwnProperty(key) ? cases[key] : defaultCase
-
-const isFunc = f => f instanceof Function ? f() : f
-
-const switchcaseF = cases => defaultCase => key => 
-    isFunc(switchcase(cases)(defaultCase)(key))
-
-const reducer = (state = initialState, action) => {
-    return switchcaseF({
-        "ADD_INGREDIENT": () => {
-            let ingredient = action.payload.ingredient
-            return {
-                ...state,
-                ingredients: {
-                    ...state.ingredients,
-                    [ingredient]: state.ingredients[ingredient] + 1
-                },
-                totalPrice: state.totalPrice + INGREDIENT_PRICE_LIST[ingredient]
-            }
+const addIngredient = (state, action) => {
+    let ingredient = action.payload.ingredient
+    return updateObject(state, {
+        ingredients: {
+            ...state.ingredients,
+            [ingredient]: state.ingredients[ingredient] + 1
         },
-        "REMOVE_INGREDIENT": () => {
-            let ingredient = action.payload.ingredient
-            if (state.ingredients[ingredient] < 1) {
-                return state
-            }
-
-            return {
-                ...state,
-                ingredients: {
-                    ...state.ingredients,
-                    [ingredient]: state.ingredients[ingredient] - 1
-                },
-                totalPrice: state.totalPrice - INGREDIENT_PRICE_LIST[ingredient]
-            }
-        },
-        "SET_INGREDIENTS": () => {
-            let ingredients = action.payload.ingredients
-            if (!ingredients) return state
-            return {
-                ...state,
-                ingredients: ingredients,
-            }
-        },
-        "FETCH_INGREDIENTS_ERROR": () => {
-            let error = action.payload.error
-            if (!error) return state
-            return {
-                ...state,
-                error: error,
-            }
-        }
-    })(state)(action.type)
+        totalPrice: state.totalPrice + INGREDIENT_PRICE_LIST[ingredient]
+    })
 }
+
+const removeIngredient = (state, action) => {
+    let ingredient = action.payload.ingredient
+    if (state.ingredients[ingredient] < 1) return state
+    return updateObject(state, {
+        ingredients: {
+            ...state.ingredients,
+            [ingredient]: state.ingredients[ingredient] - 1
+        },
+        totalPrice: state.totalPrice - INGREDIENT_PRICE_LIST[ingredient]
+    })
+}
+
+const setIngredients = (state, action) => {
+    let ingredients = action.payload.ingredients
+    if (!ingredients) return state
+    return updateObject(state, {
+        ingredients: ingredients,
+        totalPrice: 4
+    })
+}
+
+const fetchIngredientsError = (state, action) => {
+    let error = action.payload.error
+    if (!error) return state
+    return updateObject(state, { error: error })
+}
+
+const reducer = createReducer(initialState, {
+    [actionTypes.ADD_INGREDIENT]: addIngredient,
+    [actionTypes.REMOVE_INGREDIENT]: removeIngredient,
+    [actionTypes.SET_INGREDIENTS]: setIngredients,
+    [actionTypes.FETCH_INGREDIENTS_ERROR]: fetchIngredientsError
+})
 
 export default reducer;

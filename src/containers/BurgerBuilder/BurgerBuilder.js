@@ -1,4 +1,6 @@
 import React, { Component, Fragment } from 'react';
+import axiosInstance from '../../axiosOrders';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
@@ -13,7 +15,7 @@ class BurgerBuilder extends Component {
     }
 
     componentDidMount() {
-        this.props.initializeIngredients();
+        this.props.onInitializeIngredients();
     }
 
     purchaseHandler = () => {
@@ -35,7 +37,7 @@ class BurgerBuilder extends Component {
             ...this.props.ingredients
         }
         for (let k in disabledIng) {
-            disabledIng[k] = disabledIng[k] <= 0
+            disabledIng[k] = (disabledIng[k] <= 0)
         }
 
         let purchasable = false;
@@ -94,8 +96,8 @@ const mapDispatchToProps = dispatch => {
     return {
         onAddIngredient: (ingredient) => dispatch(actions.onAddIngredient(ingredient)),
         onRemoveIngredient: (ingredient) => dispatch(actions.onRemoveIngredient(ingredient)),
-        initializeIngredients: () => dispatch(actions.initializeIngredients())
+        onInitializeIngredients: () => dispatch(actions.initializeIngredients())
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BurgerBuilder);
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axiosInstance));

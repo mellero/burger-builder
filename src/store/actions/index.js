@@ -4,4 +4,11 @@ export {
     initializeIngredients
 } from './burgerBuilderAct';
 
-export {} from './ordersAct';
+export {
+    purchaseBurger,
+    fetchOrders
+} from './ordersAct';
+
+export {
+    submitOrder
+} from './util';
