@@ -10,5 +10,11 @@ export {
 } from './ordersAct';
 
 export {
+    authenticate,
+    logout,
+    authCheckState
+} from './authAct'
+
+export {
     submitOrder
 } from './util';

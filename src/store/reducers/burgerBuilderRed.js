@@ -4,6 +4,7 @@ import { updateObject, createReducer } from './util';
 const initialState = {
     ingredients: null,
     totalPrice: 4,
+    building: false,
     error: null
 }
 
@@ -21,7 +22,8 @@ const addIngredient = (state, action) => {
             ...state.ingredients,
             [ingredient]: state.ingredients[ingredient] + 1
         },
-        totalPrice: state.totalPrice + INGREDIENT_PRICE_LIST[ingredient]
+        totalPrice: state.totalPrice + INGREDIENT_PRICE_LIST[ingredient],
+        building: true
     })
 }
 
@@ -42,7 +44,8 @@ const setIngredients = (state, action) => {
     if (!ingredients) return state
     return updateObject(state, {
         ingredients: ingredients,
-        totalPrice: 4
+        totalPrice: 4,
+        building: false
     })
 }
 

@@ -1,12 +1,13 @@
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import axiosInstance from '../../axiosOrders';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
-import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import Modal from '../../components/UI/Modal/Modal';
 import Spinner from '../../components/UI/Spinner/Spinner';
-import { connect } from 'react-redux';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../store/actions/index';
 
 class BurgerBuilder extends Component {
@@ -19,6 +20,9 @@ class BurgerBuilder extends Component {
     }
 
     purchaseHandler = () => {
+        if (!this.props.isLoggedIn) {
+            return this.props.history.push("/auth");
+        }
         this.setState({ purchasing: true });
     }
 
@@ -68,7 +72,8 @@ class BurgerBuilder extends Component {
                         purchasable={purchasable}
                         purchasing={this.purchaseHandler}
                         ingredientAdded={this.props.onAddIngredient}
-                        ingredientRemoved={this.props.onRemoveIngredient} 
+                        ingredientRemoved={this.props.onRemoveIngredient}
+                        isLoggedIn={this.props.isLoggedIn} 
                         disabled={disabledIng}/>
                 </Fragment>;        
         }
@@ -86,6 +91,7 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = state => {
     return {
+        isLoggedIn: !!state.auth.token,
         ingredients: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
         error: state.burgerBuilder.error

@@ -9,7 +9,7 @@ const toolbar = ( props ) => (
         <Hamburger clicked={props.drawerToggle} />
         <div className={classes.Logo}><Logo /></div>
         <nav className={classes.DesktopOnly}>
-            <NavigationItems />
+            <NavigationItems isLoggedIn={props.isLoggedIn} />
         </nav>
     </header>
 );
