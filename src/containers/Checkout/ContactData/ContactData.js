@@ -7,56 +7,27 @@ import { connect } from 'react-redux';
 import axiosStatement from '../../../axiosOrders';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import { submitOrder } from '../../../store/actions/index';
+import { updateObject, orderFormInit, checkValidation } from '../../../utilities/utilities';
 
 
 class ContactData extends Component {
     state = {
         orderForm: {
-                name: this.orderFormInit("input", "text", "Name", "", { 
+                name: orderFormInit("input", "text", "Name", "", { 
                     required: true,
                     minLength: 2,
                     maxLength: 10 
                 }),
-                street: this.orderFormInit("input", "text", "Billing Address", "", { required: true } ),
-                postalCode: this.orderFormInit("input", "text", "Postal Code", "", { 
+                street: orderFormInit("input", "text", "Billing Address", "", { required: true } ),
+                postalCode: orderFormInit("input", "text", "Postal Code", "", { 
                     required: true,
                     minLength: 6
                 }),
-                country: this.orderFormInit("input", "text", "Country", "", { required: true } ),
-                email: this.orderFormInit("input", "email", "Email", "", { required: true })
+                country: orderFormInit("input", "text", "Country", "", { required: true } ),
+                email: orderFormInit("input", "email", "Email", "", { required: true })
         },
         isValid: false
     };
-
-    orderFormInit(emType, inType, placeholder, value, validation) {
-        return {
-            elementType: emType,
-            elementConfig: {
-                type: inType,
-                placeholder: placeholder
-            },
-            modified: false,
-            value: value,
-            validation: validation,
-            valid: false
-        }
-    }
-
-    checkValidation(value, rules) {
-        if (rules.required && value.trim() === "" ) {
-            return false;
-        }
-
-        if (rules.minLength && value.length < rules.minLength) {
-            return false;
-        }
-
-        if (rules.maxLength && value.length > rules.maxLength) {
-            return false;
-        }
-
-        return true;
-    }
 
     submitOrderHandler = (event) => {
         event.preventDefault();
@@ -78,19 +49,15 @@ class ContactData extends Component {
     }
 
     inputChangedHandler = (event, elmtId) => {
-        const updatedOrderForm = {
-            ...this.state.orderForm
-        }
-        const updatedElement = {
-            ...updatedOrderForm[elmtId]
-        }
-        updatedElement.value = event.target.value;
-        updatedElement.modified = true;
-        updatedElement.valid = this.checkValidation(updatedElement.value, updatedElement.validation);
-
-        updatedOrderForm[elmtId] = updatedElement;
+        const updatedElement = updateObject(this.state.orderForm[elmtId], {
+            value: event.target.value,
+            modified: true,
+            valid: checkValidation(event.target.value, this.state.orderForm[elmtId].validation)
+        })
+        const updatedOrderForm = updateObject(this.state.orderForm, {
+            [elmtId]: updatedElement
+        })
         this.setState({ orderForm: updatedOrderForm })
-
     }
 
     render() {

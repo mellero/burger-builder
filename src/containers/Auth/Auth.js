@@ -6,15 +6,16 @@ import Button from '../../components/UI/Button/Button';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import classes from './Auth.css';
 import { authenticate } from '../../store/actions';
+import { updateObject, orderFormInit, checkValidation } from '../../utilities/utilities';
 
 class Auth extends Component {
     state = {
         controls: {
-            email: this.orderFormInit("input", "email", "email", "", {
+            email: orderFormInit("input", "email", "email", "", {
                     required: true,
                     isEmail: true 
                 }),
-            password: this.orderFormInit("input", "password", "password", "", {
+            password: orderFormInit("input", "password", "password", "", {
                     required: true,
                     minLength: 7 
                 }),
@@ -22,46 +23,14 @@ class Auth extends Component {
         isNewUser: true
     }
 
-    orderFormInit(emType, inType, placeholder, value, validation) {
-        return {
-            elementType: emType,
-            elementConfig: {
-                type: inType,
-                placeholder: placeholder
-            },
-            modified: false,
-            value: value,
-            validation: validation,
-            valid: false
-        }
-    }
-
-    checkValidation(value, rules) {
-        if (rules.required && value.trim() === "" ) {
-            return false;
-        }
-
-        if (rules.minLength && value.length < rules.minLength) {
-            return false;
-        }
-
-        if (rules.maxLength && value.length > rules.maxLength) {
-            return false;
-        }
-
-        return true;
-    }
-
     inputChangedHandler = (event, elmtId) => {
-        const updatedControls = {
-            ...this.state.controls,
-            [elmtId]: {
-                ...this.state.controls[elmtId],
+        const updatedControls = updateObject(this.state.controls, {
+            [elmtId]: updateObject(this.state.controls[elmtId], {
                 value: event.target.value,
                 modified: true,
-                valid: this.checkValidation(event.target.value, this.state.controls[elmtId].validation)       
-            }
-        }
+                valid: checkValidation(event.target.value, this.state.controls[elmtId].validation)       
+            })
+        })
         this.setState({ controls: updatedControls })
 
     }
@@ -82,13 +51,11 @@ class Auth extends Component {
 
     render() {
         const formInputs = [];
-        let isFormValid = true;
         for (let key in this.state.controls) {
             formInputs.push({
                 id: key,
                 config: this.state.controls[key]
             });
-            if (this.state.controls[key].valid === false) isFormValid = false;
         }
 
         const form = formInputs.map(el => (

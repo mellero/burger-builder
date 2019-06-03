@@ -1,12 +1,14 @@
 import * as actionTypes from '../actions/actions';
-import { updateObject, createReducer } from './util';
+import { createReducer } from './util';
+import { updateObject } from '../../utilities/utilities';
+
 
 const initialState = {
     orders: [],
     loading: false
 }
 
-const purchaseBurgerRequest = (state, action) => updateObject(state, { loading: false })
+const purchaseBurgerRequest = (state, action) => updateObject(state, { loading: true })
 const purchaseBurgerSuccess = (state, action) => {
     const order = {
         ...action.payload.orderData,

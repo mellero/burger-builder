@@ -1,5 +1,6 @@
 import * as actionTypes from '../actions/actions';
-import { updateObject, createReducer } from './util';
+import { createReducer } from './util';
+import { updateObject } from '../../utilities/utilities';
 
 const initialState = {
     ingredients: null,
