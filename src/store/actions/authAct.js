@@ -45,8 +45,8 @@ export const authenticate = (email, pass, isNewUser) =>
             returnSecureToken: true
         }
         let url = isNewUser ?
-            "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDry9BdhdFcGMMYpD34fS_9o6db3mMdgKU"
-            : "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDry9BdhdFcGMMYpD34fS_9o6db3mMdgKU"
+            "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" + process.env.REACT_APP_GOOGLE_API_KEY
+            : "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" + process.env.REACT_APP_GOOGLE_API_KEY
 
         axios.post(url, payload)
             .then(res => {
